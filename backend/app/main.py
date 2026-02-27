@@ -19,7 +19,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Replace with your frontend URL before submission
+    allow_origins=["https://earnings-analyzer-gold.vercel.app/"],  # Replace with your frontend URL before submission
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
