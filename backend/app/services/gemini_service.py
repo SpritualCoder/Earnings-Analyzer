@@ -2,45 +2,19 @@ import os
 import json
 import logging
 from dotenv import load_dotenv
-# import google.generativeai as genai
 from google import genai
 from app.models.response_models import EarningsCallSummary
 load_dotenv()
 logger = logging.getLogger(__name__)
 
-# How many characters to send to Gemini (free tier context limit safety)
+# gemini free tier limit
 MAX_TEXT_LENGTH = 100000
 
-
-# def analyze_earnings_call(text: str) -> EarningsCallSummary:
-#     """
-#     Send extracted transcript text to Gemini and return structured summary.
-#     """
-#     genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-#     model = genai.GenerativeModel("gemini-2.5-flash")
-
-#     # Truncate if too long
-#     if len(text) > MAX_TEXT_LENGTH:
-#         logger.warning(f"Text truncated from {len(text)} to {MAX_TEXT_LENGTH} chars")
-#         text = text[:MAX_TEXT_LENGTH]
-
-#     prompt = _build_prompt(text)
-
-#     try:
-#         response = model.generate_content(prompt)
-#         raw = response.text.strip()
-#         return _parse_response(raw)
-#     except Exception as e:
-#         logger.error(f"Gemini API call failed: {e}")
-#         raise RuntimeError(f"Gemini API error: {str(e)}")
 
 
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 def analyze_earnings_call(text: str) -> EarningsCallSummary:
-    """
-    Send extracted transcript text to Gemini and return structured summary.
-    """
 
     if len(text) > MAX_TEXT_LENGTH:
         logger.warning(f"Text truncated from {len(text)} to {MAX_TEXT_LENGTH} chars")
@@ -105,10 +79,6 @@ Transcript:
 
 
 def _parse_response(raw: str) -> EarningsCallSummary:
-    """
-    Parse Gemini's JSON response into the Pydantic model.
-    Handles cases where Gemini wraps response in markdown code blocks.
-    """
     # Strip markdown code blocks if present (safety net)
     if raw.startswith("```"):
         lines = raw.split("\n")

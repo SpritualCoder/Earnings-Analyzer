@@ -15,21 +15,15 @@ MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024
 
 @router.post("/analyze", response_model=EarningsCallSummary)
 async def analyze_document(file: UploadFile = File(...)):
-    """
-    Accepts a PDF upload, extracts text, and returns structured earnings call summary.
-    """
 
-    # Validate file type
     if file.content_type not in ALLOWED_CONTENT_TYPES:
         raise HTTPException(
             status_code=400,
             detail=f"Invalid file type '{file.content_type}'. Only PDF files are accepted."
         )
 
-    # Read file bytes
     file_bytes = await file.read()
 
-    # Validate file size
     if len(file_bytes) > MAX_FILE_SIZE_BYTES:
         raise HTTPException(
             status_code=400,
@@ -44,7 +38,6 @@ async def analyze_document(file: UploadFile = File(...)):
 
     logger.info(f"Received file: {file.filename}, size: {len(file_bytes)} bytes")
 
-    # Step 1: Extract text
     try:
         text = extract_text_from_pdf(file_bytes)
         logger.info(f"Extracted {len(text)} characters from document")
@@ -60,7 +53,6 @@ async def analyze_document(file: UploadFile = File(...)):
             detail="Unexpected error during document processing."
         )
 
-    # Step 2: Analyze with Gemini
     try:
         summary = analyze_earnings_call(text)
         logger.info("Gemini analysis completed successfully")

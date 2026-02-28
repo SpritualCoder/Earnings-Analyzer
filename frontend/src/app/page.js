@@ -17,7 +17,6 @@ export default function HomePage() {
 
     try {
       const result = await analyzeDocument(file);
-      // Store result in sessionStorage to pass to results page
       sessionStorage.setItem("analysisResult", JSON.stringify(result));
       sessionStorage.setItem("fileName", file.name);
       router.push("/results");
